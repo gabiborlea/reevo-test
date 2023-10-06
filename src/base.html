@@ -9,11 +9,27 @@
       }
       #root {
         width: 100%;
-        height: calc(100vh - 60px);
+        height: calc(100vh - 100px);
       }
     </style>
   </head>
   <body>
+    <div id="shapes">0 shapes</div>
+    <div id="area">0px</div>
     <div id="root"></div>
+    <div style="display: flex;">
+      <div>
+        <div>Gravity</div>
+        <button id="decrease-gravity">-</button>
+        <span id="gravity"></span>
+        <button id="increase-gravity">+</button>
+      </div>
+      <div>
+        <div>Shapes per second</div>
+        <button id="decrease-sps">-</button>
+        <span id="sps"></span>
+        <button id="increase-sps">+</button>
+      </div>
+    </div>
   </body>
 </html>

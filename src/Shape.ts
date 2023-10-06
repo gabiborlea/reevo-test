@@ -12,7 +12,7 @@ export abstract class Shape extends Graphics {
     this.radius = RADIUS;
     this.pivot.x = this.radius;
     this.pivot.y = this.radius;
-    this.yLimit = Game.view.height + this.radius * 2;
+    this.yLimit = Game.getScreen().height + this.radius * 2;
     this._draw();
 
     this.eventMode = "static";
