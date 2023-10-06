@@ -30,3 +30,5 @@ export const CLEAR_INTERVAL = 2;
  * }.
  */
 export const INTERVAL_TIMEOUT = 3;
+
+export const RADIUS = 50;

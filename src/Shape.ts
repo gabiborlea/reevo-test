@@ -1,41 +1,116 @@
 import { Graphics } from "@pixi/graphics";
+import "@pixi/graphics-extras";
 import Game from "./Game";
+import { RADIUS } from "./constants";
 
 export abstract class Shape extends Graphics {
-   abstract _draw(): void;
-   abstract moveDown(value: number): void;
+  constructor(color: string, x: number, initialY: number) {
+    super();
+    this.color = color;
+    this.x = x;
+    this.y = initialY;
+    this.radius = RADIUS;
+    this.pivot.x = this.radius;
+    this.pivot.y = this.radius;
+    this.yLimit = Game.view.height + this.radius * 2;
+    this._draw();
+    this.interactive = true;
+    this.onclick = (e) => {
+      this.destroy();
+      e.stopPropagation();
+      e.preventDefault();
+    };
+  }
+  protected radius: number;
+  protected color: string;
+  protected yLimit: number;
+
+  abstract _draw(): void;
+  
+  moveDown(value: number): void {
+    if (this.y > this.yLimit) {
+      this.destroy();
+
+      return;
+    }
+
+    this.y += value;
+  }
 }
 
 export class Triangle extends Shape {
-    color: string;
-    constructor(height: number, color: string, x: number, initialY: number) {
-        super();
-        this.triangleHeight = height;
-        this.x = x;
-        this.y = initialY;
-        this.color = color;
-        this.pivot.x = 0;
-        this.pivot.y = height;
-        this._draw();
+  _draw(): void {
+    this.beginFill(this.color).drawRegularPolygon(
+      this.radius,
+      this.radius,
+      this.radius,
+      3
+    );
+  }
+}
 
-    }
-    _draw(): void {
-        this.beginFill(this.color, 1);
-        this.lineStyle(0, 1);
-        this.moveTo(this.triangleHeight, 0);
-        this.lineTo(this.triangleHeight / 2, this.triangleHeight); 
-        this.lineTo(0, 0);
-        this.lineTo(this.triangleHeight / 2, 0);
-        this.endFill();
-    }
+export class Quadrilateral extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawRegularPolygon(
+      this.radius,
+      this.radius,
+      this.radius,
+      4
+    );
+  }
+}
 
-    moveDown(value: number): void {
-        if (this.y > Game.view.height + this.triangleHeight) {
-            this.destroy();
+export class Pentagon extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawRegularPolygon(
+      this.radius,
+      this.radius,
+      this.radius,
+      5
+    );
+  }
+}
 
-            return;
-        }
+export class Hexagon extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawRegularPolygon(
+      this.radius,
+      this.radius,
+      this.radius,
+      6
+    );
+  }
+}
 
-        this.y += value;
-    }
+export class Circle extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawCircle(
+      this.radius,
+      this.radius,
+      this.radius
+    );
+  }
+}
+
+export class Ellipse extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawEllipse(
+      this.radius,
+      this.radius,
+      this.radius,
+      this.radius - 15
+    );
+  }
+}
+
+export class Start extends Shape {
+  _draw(): void {
+    this.beginFill(this.color).drawStar(
+      this.radius,
+      this.radius,
+      5,
+      this.radius - 30,
+      this.radius
+    );
+  }
 }
