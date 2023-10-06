@@ -14,19 +14,20 @@ export abstract class Shape extends Graphics {
     this.pivot.y = this.radius;
     this.yLimit = Game.view.height + this.radius * 2;
     this._draw();
-    this.interactive = true;
-    this.onclick = (e) => {
+
+    this.eventMode = "static";
+    this.addEventListener("pointerdown", (e) => {
       this.destroy();
-      e.stopPropagation();
       e.preventDefault();
-    };
+      e.stopPropagation();
+    });
   }
   protected radius: number;
   protected color: string;
   protected yLimit: number;
 
   abstract _draw(): void;
-  
+
   moveDown(value: number): void {
     if (this.y > this.yLimit) {
       this.destroy();
@@ -40,7 +41,7 @@ export abstract class Shape extends Graphics {
 
 export class Triangle extends Shape {
   _draw(): void {
-    this.beginFill(this.color).drawRegularPolygon(
+    this.beginFill(this.color).drawRegularPolygon?.(
       this.radius,
       this.radius,
       this.radius,
@@ -51,7 +52,7 @@ export class Triangle extends Shape {
 
 export class Quadrilateral extends Shape {
   _draw(): void {
-    this.beginFill(this.color).drawRegularPolygon(
+    this.beginFill(this.color).drawRegularPolygon?.(
       this.radius,
       this.radius,
       this.radius,
@@ -62,7 +63,7 @@ export class Quadrilateral extends Shape {
 
 export class Pentagon extends Shape {
   _draw(): void {
-    this.beginFill(this.color).drawRegularPolygon(
+    this.beginFill(this.color).drawRegularPolygon?.(
       this.radius,
       this.radius,
       this.radius,
@@ -73,7 +74,7 @@ export class Pentagon extends Shape {
 
 export class Hexagon extends Shape {
   _draw(): void {
-    this.beginFill(this.color).drawRegularPolygon(
+    this.beginFill(this.color).drawRegularPolygon?.(
       this.radius,
       this.radius,
       this.radius,
@@ -105,7 +106,7 @@ export class Ellipse extends Shape {
 
 export class Start extends Shape {
   _draw(): void {
-    this.beginFill(this.color).drawStar(
+    this.beginFill(this.color).drawStar?.(
       this.radius,
       this.radius,
       5,

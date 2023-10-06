@@ -30,14 +30,14 @@ class Game extends Application<HTMLCanvasElement> {
 
   private constructor() {
     const root = document.getElementById("root");
-    super({ resizeTo: root });
+    super({ resizeTo: root ?? undefined });
     this.gravity = 4;
     this.generateWorker = new Worker(intervalWorkerScript, {
       name: "Shape Generator Worker",
     });
-    this.generateShapeRandomX = this.generateShapeRandomX.bind(this);
+    this.addShapeRandomX = this.addShapeRandomX.bind(this);
     this.moveShapes = this.moveShapes.bind(this);
-    this.generateWorker.onmessage = this.generateShapeRandomX;
+    this.generateWorker.onmessage = this.addShapeRandomX;
 
     this.moveWorker = new Worker(intervalWorkerScript, {
       name: "Shape Movement Worker",
@@ -45,11 +45,14 @@ class Game extends Application<HTMLCanvasElement> {
 
     this.moveWorker.onmessage = this.moveShapes;
 
-    this.view.onclick = (e) => {
-      this.generateRandomShape(e.offsetX, e.offsetY);
-      e.stopPropagation();
-      e.preventDefault();
-    };
+    this.stage.eventMode = "static";
+    this.stage.hitArea = this.screen;
+
+    this.stage.addEventListener("pointerdown", (e) => {
+      const shape = this.generateRandomShape(0, 0);
+      shape.position.copyFrom(e.global);
+      this.addShape(shape);
+    });
   }
 
   public static getInstance(): Game {
@@ -68,10 +71,10 @@ class Game extends Application<HTMLCanvasElement> {
     return this.stage.children as Array<Shape>;
   }
 
-  public generateShapeRandomX() {
+  public addShapeRandomX() {
     const x =
       RADIUS + Math.floor(Math.random() * (this.screen.width - 2 * RADIUS));
-    this.generateRandomShape(x, -RADIUS);
+    this.addShape(this.generateRandomShape(x, -RADIUS));
   }
 
   public generateRandomShape(x: number, y: number) {
@@ -80,8 +83,7 @@ class Game extends Application<HTMLCanvasElement> {
     );
     const color =
       "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
-    const shape = new this.shapesConstructors[constructorIndex](color, x, y);
-    this.addShape(shape);
+    return new this.shapesConstructors[constructorIndex](color, x, y);
   }
 
   public moveShapes() {
